@@ -1,0 +1,67 @@
+---
+# tasks file for node_exporter_installer
+
+- name: Ensure prometheus user and group have been created
+  user:
+    name: prometheus
+    shell: /sbin/nologin
+    system: yes
+    create_home: no
+    comment: prometheus user
+    state: present
+
+- name: Unarchive {{ node_exporter_filename }} to remote {{ node_exporter_bin_path }}
+  unarchive:
+    src: "{{ node_exporter_filename }}"
+    dest: "{{ node_exporter_bin_path }}"
+    exclude:
+      - LICENSE
+      - NOTICE
+    extra_opts:
+      - --strip-components=1
+    mode: u=rwx,g=rx,o=rx
+    owner: prometheus
+    group: prometheus
+  notify: Restart node_exporter service
+
+- name: Ensure /etc/prometheus path has been created
+  file:
+    path: /etc/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: 0755
+
+- name: Copy node_exporter.service to /etc/systemd/system/
+  template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+  notify: Restart node_exporter service
+
+- name: Reload systemd daemon for node_exporter.service
+  systemd:
+    daemon_reload: yes
+
+- name: Copy node_exporter.env to {{ node_exporter_etc_path }}
+  template:
+    src: node_exporter.env.j2
+    dest: "{{ node_exporter_etc_path }}node_exporter.env"
+  notify: Restart node_exporter service
+
+- name: Collect facts about system services
+  service_facts:
+
+- name: Ensure 9100 port open when firewalld is started
+  firewalld:
+    port: 9100/tcp
+    permanent: true
+    state: enabled
+    immediate: true
+  when: ansible_facts.services['firewalld.service'] is defined
+  ignore_errors: yes
+
+- name: Ensure node_exporter service is started and enabled
+  service:
+    name: node_exporter
+    state: started
+    enabled: yes

@@ -1,0 +1,7 @@
+---
+# handlers file for node_exporter_installer
+
+- name: Restart node_exporter service
+  service:
+    name: node_exporter
+    state: restarted

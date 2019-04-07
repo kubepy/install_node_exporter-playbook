@@ -1,0 +1,13 @@
+---
+# tasks file for node_exporter_installer
+
+- name: Install node_exporter
+  include_tasks: install.yml
+  when: >
+    (( node_exporter_install | bool ) and ( ansible_distribution == "RedHat" and ansible_distribution_major_version == '7' )) 
+    or  
+    (( node_exporter_install | bool ) and ( ansible_distribution == "CentOS" and ansible_distribution_major_version == '7' ))
+
+- name: Uninstall node_exporter
+  include_tasks: uninstall.yml
+  when: not node_exporter_install | bool
