@@ -1,5 +1,5 @@
 ---
-- hosts: linux
+- hosts: node_exporter
   gather_facts: true
   roles:
     - node_exporter_installer

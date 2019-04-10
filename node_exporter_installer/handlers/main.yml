@@ -4,4 +4,4 @@
 - name: Restart node_exporter service
   service:
     name: node_exporter
-    state: Restarted
+    state: restarted

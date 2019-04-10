@@ -10,4 +10,7 @@
 
 - name: Uninstall node_exporter
   include_tasks: uninstall.yml
-  when: not node_exporter_install | bool
+  when: >
+    (( not node_exporter_install | bool ) and ( ansible_distribution == "RedHat" and ansible_distribution_major_version == '7' ))
+    or
+    (( not node_exporter_install | bool ) and ( ansible_distribution == "CentOS" and ansible_distribution_major_version == '7' ))
