@@ -2,6 +2,6 @@
 # defaults file for node_exporter_installer
 node_exporter_install: True
 node_exporter_filename: node_exporter-0.17.0.linux-amd64.tar.gz
-node_exporter_etc_path: /etc/prometheus/
+node_exporter_etc_path: /etc/default/
 node_exporter_bin_path: /usr/local/bin/
 node_exporter_opts: '--log.level=info --collector.logind --collector.systemd --collector.tcpstat --collector.ntp --collector.interrupts  --collector.meminfo_numa --collector.processes --no-collector.bonding --no-collector.bcache --no-collector.arp --no-collector.edac --no-collector.infiniband --no-collector.ipvs --no-collector.mdadm --no-collector.nfs --no-collector.nfsd --no-collector.textfile --no-collector.wifi --no-collector.hwmon --no-collector.conntrack --no-collector.timex --no-collector.zfs'

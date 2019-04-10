@@ -3,8 +3,7 @@ Description=Node Exporter
 After=network.target
 
 [Service]
-User=prometheus
-EnvironmentFile=-{{ node_exporter_etc_path }}node_exporter.env
+EnvironmentFile=-{{ node_exporter_etc_path }}node_exporter
 Restart=Always
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStart={{ node_exporter_bin_path }}node_exporter $NODE_EXPORTER_OPTS
