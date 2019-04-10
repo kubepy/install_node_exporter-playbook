@@ -1,15 +1,6 @@
 ---
 # tasks file for node_exporter_installer
 
-- name: Ensure prometheus user and group have been created
-  user:
-    name: prometheus
-    shell: /sbin/nologin
-    system: yes
-    create_home: no
-    comment: prometheus user
-    state: present
-
 - name: Unarchive {{ node_exporter_filename }} to remote {{ node_exporter_bin_path }}
   unarchive:
     src: "{{ node_exporter_filename }}"
@@ -20,17 +11,9 @@
     extra_opts:
       - --strip-components=1
     mode: u=rwx,g=rx,o=rx
-    owner: prometheus
-    group: prometheus
+    owner: root
+    group: root
   notify: Restart node_exporter service
-
-- name: Ensure /etc/prometheus path has been created
-  file:
-    path: /etc/prometheus
-    state: directory
-    owner: prometheus
-    group: prometheus
-    mode: 0755
 
 - name: Copy node_exporter.service to /etc/systemd/system/
   template:
@@ -42,10 +25,13 @@
   systemd:
     daemon_reload: yes
 
-- name: Copy node_exporter.env to {{ node_exporter_etc_path }}
+- name: Copy node_exporter to {{ node_exporter_etc_path }}
   template:
-    src: node_exporter.env.j2
-    dest: "{{ node_exporter_etc_path }}node_exporter.env"
+    src: node_exporter.j2
+    dest: "{{ node_exporter_etc_path }}node_exporter"
+    mode: u=rw,g=r,o=r
+    owner: root
+    group: root
   notify: Restart node_exporter service
 
 - name: Collect facts about system services
