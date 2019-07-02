@@ -1,0 +1,37 @@
+---
+# tasks file for node_exporter_installer
+
+- name: Ensure node_exporter service is stopped and disabled
+  service:
+    name: node_exporter
+    state: stopped
+    enabled: no
+
+- name: Clean remote {{ node_exporter_bin_path }}{{ node_exporter_filename }}
+  file:
+    state: absent
+    name: "{{ node_exporter_bin_path }}{{ node_exporter_filename }}"
+
+- name: Clean node_exporter.service from /etc/systemd/system/
+  file:
+    name: /etc/systemd/system/node_exporter.service
+
+- name: Reload systemd daemon for node_exporter.service
+  systemd:
+    daemon_reload: yes
+
+- name: Clean node_exporter from {{ node_exporter_etc_path }}
+  file:
+    name: "{{ node_exporter_etc_path }}node_exporter"
+
+- name: Collect facts about ddsystem services
+  service_facts:
+
+- name: Ensure 9100 port open when firewalld is started
+  firewalld:
+    port: 9100/tcp
+    permanent: true
+    state: disabled
+    immediate: true
+  when: ansible_facts.services['firewalld.service'] is defined
+  ignore_errors: yes
