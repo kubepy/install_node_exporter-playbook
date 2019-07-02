@@ -14,6 +14,7 @@
 
 - name: Clean node_exporter.service from /etc/systemd/system/
   file:
+    state: absent
     name: /etc/systemd/system/node_exporter.service
 
 - name: Reload systemd daemon for node_exporter.service
@@ -22,6 +23,7 @@
 
 - name: Clean node_exporter from {{ node_exporter_etc_path }}
   file:
+    state: absent
     name: "{{ node_exporter_etc_path }}node_exporter"
 
 - name: Collect facts about ddsystem services
